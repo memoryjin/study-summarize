@@ -2,17 +2,17 @@
 
 ```js
 const Person = function() {
-	this.name = 'jinchs';
-	this.age = 25;
+    this.name = 'jinchs';
+    this.age = 25;
 }
 Person.prototype.sayMessage = function() {
-	console.log(`The name is ${this.name}, and the age is ${this.age}.`);
+    console.log(`The name is ${this.name}, and the age is ${this.age}.`);
 }
 const Female = function() {
-	Person.call(this);
+    Person.call(this);
 }
 Female.prototype.sayYes = function() {
-	console.log('yes');
+    console.log('yes');
 }
 
 /*---------------------方法1 通过ES6来设置原型链--------------------------*/
@@ -41,13 +41,13 @@ const female = new Female();
 
 ```js
 const obj1 = {
-	name: 'jinchs',
-	age: 25
+    name: 'jinchs',
+    age: 25
 };
 const obj2 = {
-	sayMessage: function() {
-		console.log(`The name is ${this.name}, and the age is ${this.age}.`);
-	}
+    sayMessage: function() {
+        console.log(`The name is ${this.name}, and the age is ${this.age}.`);
+    }
 };
 // 默认情况下，obj1.__proto__指向了Object.prototype，这里通过调用setPrototypeOf的方法，
 // 将obj1.__proto__的指向改为obj2，从而obj1上可以调用obj2上的方法
@@ -62,4 +62,33 @@ obj1.__proto__.__proto__ === Object.prototype // true
 _思考题：如何在不打破原先继承关系的基础上让obj1也能调用obj2上的方法??_
 
 
+## 3. 如何理解es6中新增的extends？
 
+```js
+class Person {
+    constructor() {
+        this.name = 'jinchs';
+    }
+
+    sayName() {
+        console.log(this.name);
+    }
+
+    static sayCount() {
+        console.log('count');
+    }
+}
+
+class Female extends Person {}
+const female = new Female();
+
+Female.__proto__ === Person // true
+
+Female.prototype.__proto__ === Person.prototype // true
+```
+
+### 总结：
+
+(1) 通过extends关键词直接决定了 Female 和 Female.prototype 中\_\_proto\_\_的指向；
+
+(2) 子类的constructor方法中必须首先调用super()，目的是实现定义在父级constructor中的属性. 
