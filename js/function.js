@@ -131,3 +131,15 @@ const removeDuplicates = function(arr1, arr2) {
     arr2 = arr2.filter(value => !initArr1.includes(value));
     return [arr1, arr2];
 }
+
+// 生成一个一定范围内的随机数
+const createRandomNum = function(start, end) {
+    const isNumOrStr = value => typeof value === 'number' || typeof value === 'string';
+    if (isNumOrStr(start) && isNumOrStr(end)) {
+        start = +start;
+        end = +end;
+        if (end - start > 0) {
+            return start + Math.floor(Math.random() * (end - start + 1));
+        }
+    }
+}
