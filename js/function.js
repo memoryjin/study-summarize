@@ -85,30 +85,73 @@ const getMaxValue = function(arr, index) {
 }
 
 /**
+ * @function objUtil
+ * @description 对象的扩展方法，包括set、get和remove
+ * @returns {object} 返回一个对象
+ */
+const objUtil = function() {
+    return {
+        get(obj = {}, path) {
+            if (!obj || !path) {
+                return null;
+            }
+            const array = path.split('.');
+            for (let i = 0, len = array.length; i < len; i++) {
+                obj = obj[array[i]];
+                if (obj === null || typeof obj === 'undefined') {
+                    return null;
+                }
+            }
+            return obj;
+        },
+        set(obj = {}, path, value) {
+            if (!obj || !path) {
+                return null;
+            }
+            const array = path.split('.');
+            for (let i = 0, len = array.length; i < len; i++) {
+                if (i < len - 1) {
+                    obj = (obj[array[i]] = obj[array[i]] || {});
+                } else {
+                    obj[array[i]] = value;
+                }
+            }
+        },
+        remove(obj = {}, path) {
+            if (!obj || !path) {
+                return null;
+            }
+            const array = path.split('.');
+            for (let i = 0, len = array.length; i < len; i++) {
+                if (i < len - 1) {
+                    obj = (obj[array[i]] = obj[array[i]] || {});
+                } else {
+                    delete obj[array[i]];
+                }
+            }
+        }
+    }
+}
+
+/**
  * @function getMaxValue
  * @description 按一定的规则对数组进行排序，例如根据每个对象的age排序，id排序等等
  * @param {array} arr - 目标数组
- * @param {string} desc - 描述符，格式为'a.b.c'...
+ * @param {string} path - 路径描述符，格式为'a.b.c'...
  * @param {string} direction - 方向，asc为升序，des为降序
  * @example
  * sortArrByRule([{person: {age: 25}}, {person: {age: 55}}, {person: {age: 5}}, {person: {age: 78}}], 'person.age', 'des')
  */
-const sortArrByRule = function(arr, desc, direction = 'asc') {
-    if (!Array.isArray(arr) || typeof desc !== 'string') {
+const sortArrByRule = function(arr, path, direction = 'asc') {
+    const obj = objUtil();
+    if (!Array.isArray(arr) || typeof path !== 'string') {
         return;
     } else {
-        const paramsArr = desc.split('.');
-        arr.sort((value1, value2) => {
-            try {
-                paramsArr.forEach(key => {
-                    value1 = value1[key];
-                    value2 = value2[key];
-                });
-            } catch (e) {
-                throw new Error('the desc is incorrect!');
-            }
-            return direction === 'asc' ? value1 - value2 : value2 - value1;
-        });
+        arr.sort((a, b) => {
+            const valueA = obj(a, path);
+            const valueB = obj(b, path);
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        })
     }
 }
 
@@ -142,4 +185,10 @@ const createRandomNum = function(start, end) {
             return start + Math.floor(Math.random() * (end - start + 1));
         }
     }
+}
+
+// 判断一个值是否是对象
+const isObject = function(obj) {
+    const type = typeof obj;
+    return type === 'function' || type === 'object' && !!obj;
 }
