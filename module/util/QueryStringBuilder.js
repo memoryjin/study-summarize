@@ -19,7 +19,7 @@ class QueryStringBuilder {
                     }
                 })
             }
-        }          
+        }
     }
 
     get(key) {
@@ -46,6 +46,8 @@ class QueryStringBuilder {
         let str = JSON.stringify(this.model).replace(/[{}"]/g, '')
                       .replace(/:/g, '=')
                       .replace(/,/g, '&');
-        return `?${str}`;            
+        return `?${str}`;
     }
 }
+
+export default QueryStringBuilder

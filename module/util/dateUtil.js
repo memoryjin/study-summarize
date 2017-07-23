@@ -132,4 +132,4 @@ dateUtil.getWeekDay = function(date) {
 /**
  * @exports module:dateUtil
  */
-export dateUtil;
+export default dateUtil;

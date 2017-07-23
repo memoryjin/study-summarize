@@ -257,4 +257,4 @@ class Store extends BaseStore {
     }
 }
 
-export Store
+export default Store
