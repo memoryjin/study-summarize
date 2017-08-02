@@ -192,3 +192,32 @@ const isObject = function(obj) {
     const type = typeof obj;
     return type === 'function' || type === 'object' && !!obj;
 }
+
+// 图片懒加载
+const lazyLoadImg = function(url) {
+    const promise = new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = function() {
+            resolve(img);
+        };
+        img.onerror = function() {
+            reject();
+        }
+    });
+    return promise;
+}
+// 数组求和
+const caculateArraySum = function(arr) {
+    return arr.reduce((sum, value) => {
+        return sum + value;
+    }, 0);
+}
+
+// flaten array
+const flatenArray = function(arr) {
+    return arr.reduce((preArr, value) => {
+        return preArr.concat(Array.isArray(value) ? flatenArray(value) : value);
+    }, [])
+}
+
