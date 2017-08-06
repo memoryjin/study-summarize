@@ -1,6 +1,6 @@
 class QueryStringBuilder {
     constructor(url) {
-        this.search = url ? decodeURIComponent(url).replace(/^[^?]+\??/, '') : ecodeURIComponent(window.location.search).slice(1);
+        this.search = url ? decodeURIComponent(url).replace(/^[^?]+\??/, '') : decodeURIComponent(window.location.search).slice(1);
         this.queryObj = this.buildQueryObj();
     }
 
