@@ -228,9 +228,9 @@ const loadJS = function(url) {
         script.type = 'text/javascript';
         script.src = url;
         document.body.appendChild(script);
-        if(script.readyState) {
+        if (script.readyState) {
             script.onreadystatechange = () => {
-                if(script.readyState === 'loaded' || script.readyState === 'complete') {
+                if (script.readyState === 'loaded' || script.readyState === 'complete') {
                     script.onreadystatechange = null;
                     resolve();
                 }
@@ -253,10 +253,89 @@ const url3 = "https://cdn.bootcss.com/bootstrap/4.0.0-alpha.5/js/bootstrap.js";
 
 // 串行加载
 loadJS(url1).then(() => loadJS(url2))
-            .then(() => loadJS(url3))
-            .then(() => {console.log('done')});
+    .then(() => loadJS(url3))
+    .then(() => { console.log('done') });
 
 // 并行加载
 Promise.all([loadJS(url1), loadJS(url2), loadJS(url3)]).then(() => {
     console.log('done');
 })
+
+
+// 简易的ajax
+const ajax = function(options) {
+    const formatParams = function(data) {
+        const arr = [];
+        const keyList = Object.keys(data);
+        keyList.forEach(key => {
+            arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+        });
+        return arr.join('&');
+    }
+
+    options = options || {};
+    options.method = (options.method || 'GET').toUpperCase();
+    options.dataType = options.dataType || 'json';
+    const params = formatParams(options.data);
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            const status = xhr.status;
+            if (status >= 200 && status < 300 || status === 304) {
+                options.onSuccess && options.onSuccess(xhr.responseText);
+            } else {
+                options.onFail && options.onFail(status);
+            }
+        }
+    }
+    if (options.method === 'GET') {
+        const url = `${options.url}?${params}`;
+        xhr.open('GET', url, true);
+        xhr.send(null);
+    } else if (options.method === 'POST') {
+        xhr.open('POST', options.url, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(params);
+    }
+}
+
+// jsonp跨域请求封装
+const jsonp = function(options) {
+    const formatParams = function(data) {
+        const arr = [];
+        const keyList = Object.keys(data);
+        keyList.forEach(key => {
+            arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+        });
+        return arr.join('&');
+    }
+
+    options = options || {};
+
+    //创建 script 标签并加入到页面中
+    const cbName = ('jsonp_' + Math.random()).replace('.', '');
+    const headElm = document.getElementsByTagName('head')[0];
+    const params = formatParams(options.data);
+    const scriptElm = document.createElement('script');
+    headElm.appendChild(scriptElm);
+
+    //创建jsonp回调函数
+    window[cbName] = function(data) {
+        headElm.removeChild(scriptElm);
+        clearTimeout(scriptElm.timer);
+        window[cbName] = null;
+        options.onSuccess && options.onSuccess(data);
+    }
+
+    // 发送请求
+    scriptElm.src = options.url + '?' + params;
+
+    // 超时处理
+    if (options.expireTime) {
+        scriptElm.timer = setTimeout(() => {
+            window[cbName] = null;
+            headElm.removeChild(scriptElm);
+            options.onFail && options.onFail({ message: '请求超时' });
+        }, options.expireTime);
+    }
+}
