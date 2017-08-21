@@ -339,3 +339,66 @@ const jsonp = function(options) {
         }, options.expireTime);
     }
 }
+
+// deep clone object
+const deepClone = function(obj) {
+    const judgeType = function(obj) {
+        if (obj && typeof obj === 'object' || typeof obj === 'function') {
+            if (Array.isArray(obj)) {
+                return 'array';
+            }
+            if (obj instanceof Date) {
+                return 'date';
+            }
+            if (obj instanceof RegExp) {
+                return 'reg';
+            }
+            // 不是array、date和regExp的话就当做普通对象处理，
+            // 暂不考虑set和map，后期添加
+            if (typeof obj === 'object') {
+                return 'object';
+            }
+            if (typeof obj === 'function') {
+                return 'function';
+            }
+        }
+    }
+    let result;
+    if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null) {
+        return obj;
+    } else {
+        switch (judgeType(obj)) {
+            case 'array':
+                result = [];
+                obj.forEach(item => {
+                    result.push(deepClone(item));
+                });
+                break;
+            case 'date':
+                result = new Date(obj);
+                break;
+            case 'reg':
+                const source = obj.source;
+                let modifier = '';
+                modifier += obj.ignoreCase ? 'i' : '';
+                modifier += obj.global ? 'g' : '';
+                modifier += obj.multiline ? 'm' : '';
+                result = new RegExp(source, modifier);
+                break;
+            case 'object':
+                result = {};
+                const keyList = Object.getOwnPropertyNames(obj);
+                keyList.forEach(key => {
+                    result[key] = deepClone(obj[key]);
+                });
+                break;
+            case 'function':
+                // 函数暂时没有实现深度克隆，
+                // 一是没有很好的思路实现
+                // 二是考虑到实际场合中很少需要‘克隆函数’，一般直接覆盖
+                result = obj;
+                break;
+        }
+        return result;
+    }
+}
