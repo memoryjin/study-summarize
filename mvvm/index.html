@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>最蠢的实现方法</title>
+  <script src="./public/bundle.js" defer></script>
+</head>
+<body>
+  <div id="mvvm-app">
+    <input type="text" v-model="word">
+    <p>{{wordReverse}}</p>
+    <button v-on:click="sayHi">change model</button>
+  </div>
+</body>
+</html>
