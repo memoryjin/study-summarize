@@ -8,45 +8,51 @@
   <button class="add-btn">打印</button>
   <script>
     const addBtn = document.querySelector('.add-btn')
-    const ajax = function(options) {
-      const formatParams = function(data = {}) {
-        const arr = [];
-        const keyList = Object.keys(data);
-        keyList.forEach(key => {
-          arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
-        });
-        return arr.join('&');
-      }
+    const ajax = function (options) {
+      return new Promise((resolve, reject) => {
+        const formatQuery = function(data = {}) {
+          return Object.keys(data).reduce((prev, cur) => {
+            if (!prev) {
+              return '?' + encodeURIComponent(cur) + '=' + encodeURIComponent(data[cur])
+            } else {
+              return prev + '&' + encodeURIComponent(cur) + '=' + encodeURIComponent(data[cur])
+            }
+          }, '')
+        }
+        options = options || {};
+        options.method = (options.method || 'GET').toUpperCase()
+        options.dataType = options.dataType || 'json'
 
-      options = options || {};
-      options.method = (options.method || 'GET').toUpperCase();
-      options.dataType = options.dataType || 'json';
-      const params = formatParams(options.data);
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          const status = xhr.status;
-          if (status >= 200 && status < 300 || status === 304) {
-            options.onSuccess && options.onSuccess(xhr.response);
-          } else {
-            options.onFail && options.onFail(status);
+        const xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            const statusCode = xhr.status
+            if (statusCode >= 200 && statusCode < 300 || statusCode === 304) {
+              resolve(JSON.parse(xhr.responseText))
+            } else {
+              reject(statusCode)
+            }
           }
         }
-      }
-      if (options.method === 'GET') {
-        const url = `${options.url}`;
-        xhr.open('GET', url, true);
-        xhr.setRequestHeader('Cache-Control', 'max-age=60');
-        xhr.send(null);
-      }
+        if (options.method.toUpperCase() === 'GET') {
+          const query = formatQuery(options.query)
+          const url = options.url + query
+          xhr.open('GET', url, true)
+          xhr.send(null)
+        } else if (options.method.toUpperCase() === 'POST') {
+          xhr.open('POST', options.url, true)
+          xhr.setRequestHeader('Content-Type', 'application/json')
+          xhr.send(JSON.stringify(options.data))
+        }
+      })
     }
 
     addBtn.addEventListener('click', e => {
       ajax({
         url: '/users.json',
-        onSuccess: function (res) {
-          console.log(JSON.parse(res))
-        }
+        method: 'GET'
+      }).then(res => {
+        console.log(res)
       })
     })
   </script>
