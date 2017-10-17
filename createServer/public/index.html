@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>nodejs server</title>
+</head>
+<body>
+  <button class="add-btn">打印</button>
+  <script>
+    const addBtn = document.querySelector('.add-btn')
+    const ajax = function(options) {
+      const formatParams = function(data = {}) {
+        const arr = [];
+        const keyList = Object.keys(data);
+        keyList.forEach(key => {
+          arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+        });
+        return arr.join('&');
+      }
+
+      options = options || {};
+      options.method = (options.method || 'GET').toUpperCase();
+      options.dataType = options.dataType || 'json';
+      const params = formatParams(options.data);
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          const status = xhr.status;
+          if (status >= 200 && status < 300 || status === 304) {
+            options.onSuccess && options.onSuccess(xhr.response);
+          } else {
+            options.onFail && options.onFail(status);
+          }
+        }
+      }
+      if (options.method === 'GET') {
+        const url = `${options.url}`;
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('Cache-Control', 'max-age=60');
+        xhr.send(null);
+      }
+    }
+
+    addBtn.addEventListener('click', e => {
+      ajax({
+        url: '/users.json',
+        onSuccess: function (res) {
+          console.log(JSON.parse(res))
+        }
+      })
+    })
+  </script>
+</body>
+</html>
