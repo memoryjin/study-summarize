@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Upload File</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js" defer></script>
+</head>
+<body>
+  <h2>Koa2 request post demo</h2>
+  <form id="form">
+    <p>name</p>
+    <input type="text" name="name">
+    <br>
+    <p>age</p>
+    <input type="text" name="age">
+    <br>
+    <p>file</p>
+    <input type="file" name="file">
+    <br>
+    <button class="submit" type="submit">提交</button>
+  </form>
+  <script>
+    const formEl = document.querySelector('#form')
+    const inputEls = document.querySelectorAll('input')
+    const submitBtn = document.querySelector('.submit')
+    formEl.addEventListener('submit', e => {
+      e.preventDefault()
+      const data = new FormData()
+      data.append('userName', inputEls[0].value)
+      data.append('age', inputEls[1].value)
+      data.append('file', inputEls[2].files[0])
+      config = {
+        headers: {
+          'content-Type': 'formData'
+        }
+      }
+      axios.post('/upload', data, config).then(res => {
+        const data = res.data
+      })
+    })
+  </script>
+</body>
+</html>
