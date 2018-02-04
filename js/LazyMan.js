@@ -2,12 +2,18 @@
 class Man {
   constructor(name) {
     this.taskList = [];
-    this.taskList.push(this.createTask({ type: 'sayHi', msg: name }));
+    this.taskList.push(this.createTask({
+      type: 'sayHi',
+      msg: name
+    }));
     setTimeout(() => this.next(), 0);
   }
 
   createTask(param) {
-    const { type, msg } = param;
+    const {
+      type,
+      msg
+    } = param;
     switch (type) {
       case 'sayHi':
         return () => {
@@ -37,25 +43,34 @@ class Man {
   }
 
   eat(part) {
-    const task = this.createTask({ type: 'eat', msg: part });
+    const task = this.createTask({
+      type: 'eat',
+      msg: part
+    });
     this.taskList.push(task);
     return this;
   }
 
   sleep(sec) {
-    const task = this.createTask({ type: 'wake', msg: sec });
+    const task = this.createTask({
+      type: 'wake',
+      msg: sec
+    });
     this.taskList.push(task);
     return this;
   }
 
   sleepFirst(sec) {
-    const task = this.createTask({ type: 'wake', msg: sec });
+    const task = this.createTask({
+      type: 'wake',
+      msg: sec
+    });
     this.taskList.unshift(task);
     return this;
   }
 }
 
-const LazyMan = function(name) {
+const LazyMan = function (name) {
   return new Man(name);
 }
 
@@ -64,14 +79,20 @@ const LazyMan = function(name) {
 class Man {
   constructor(name) {
     this.tasks = []
-    this.tasks.push(this.createTask({ type: 'sayHi', msg: name }))
+    this.tasks.push(this.createTask({
+      type: 'sayHi',
+      msg: name
+    }))
     setTimeout(() => {
-        this.runTask()
+      this.runTask()
     }, 0)
   }
 
   createTask(param) {
-    const { type, msg } = param
+    const {
+      type,
+      msg
+    } = param
     switch (type) {
       case 'sayHi':
         return () => {
@@ -99,30 +120,39 @@ class Man {
     }
   }
 
-  eat (part) {
-    this.tasks.push(this.createTask({ type: 'eat', msg: part }))
+  eat(part) {
+    this.tasks.push(this.createTask({
+      type: 'eat',
+      msg: part
+    }))
     return this
   }
 
-  sleep (second) {
-    this.tasks.push(this.createTask({ type: 'sleep', msg: second }))
+  sleep(second) {
+    this.tasks.push(this.createTask({
+      type: 'sleep',
+      msg: second
+    }))
     return this
   }
 
-  sleepFirst (second) {
-    this.tasks.unshift(this.createTask({ type: 'sleep', msg: second }))
+  sleepFirst(second) {
+    this.tasks.unshift(this.createTask({
+      type: 'sleep',
+      msg: second
+    }))
     return this
   }
 
-  async runTask () {
+  async runTask() {
     if (this.tasks && this.tasks.length) {
-        for (const task of this.tasks) {
-            await task()
-        }
+      for (const task of this.tasks) {
+        await task()
+      }
     }
   }
 }
 
 const lazyMan = function (name) {
-    return new Man(name)
+  return new Man(name)
 }

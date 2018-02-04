@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>throttle</title>
+  <style>
+    .btn {
+      display: inline-block;
+      width: 80px;
+      height: 50px;
+      line-height: 50px;
+      margin: 20px;
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .text-center {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="text-center">
+      <button class="btn">0</button>
+  </div>
+  <div class="text-center">
+      <a href="javascript:void(0)" class="cancel">取消</a>
+  </div>
+  <script src="./throttle.js"></script>
+  <script>
+    let count = 1
+    const btn = document.querySelector('.btn'),
+          cancel = document.querySelector('.cancel')
+    const getUserAction = function (e) {
+      btn.innerHTML = count++
+    }
+    const cb = throttle(getUserAction)
+    btn.addEventListener('click', cb)
+    cancel.addEventListener('click', cb.cancel)
+  </script>
+</body>
+</html>
