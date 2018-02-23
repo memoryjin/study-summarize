@@ -318,3 +318,20 @@ function sleep (seconds: number): Promise<{}> {
     setTimeout(resolve, seconds * 1000)
   })
 }
+
+function randomSelect (arr: any[], size = 1) {
+  if (size > arr.length) {
+    throw new Error('size can\'t be larger than arr length')
+  }
+  const length = arr.length
+  const selectIdx = []
+  const result = []
+  while (selectIdx.length < size) {
+    const idx = random(0, length - 1)
+    if (!selectIdx.includes(idx)) {
+      selectIdx.push(idx)
+      result.push(arr[idx])
+    }
+  }
+  return result
+}
